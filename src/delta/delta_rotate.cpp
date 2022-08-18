@@ -1,3 +1,5 @@
+#include "Arduino.h"
+#include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 
@@ -14,6 +16,66 @@ void setup()
     M[i]->setSpeed(0);
   }
 }
+
+boolean gehe_zu(int *R_soll)
+{
+
+  int v, R[3];
+  int toleranz = 5;
+  unsigned long start_zeit = millis();
+  boolean aktiv[3] = {true, true, true};
+
+  while ((aktiv[0] || aktiv[1] || aktiv[2]))
+  {
+
+    R[0] = analogRead(0);
+    R[1] = analogRead(1);
+    R[2] = analogRead(2);
+
+    for (byte i = 0; i <= 0; i++)
+    {
+
+      if (aktiv[i])
+      {
+        if (R[i] > R_soll[i] + toleranz)
+        {
+          // v = 2 * (R[i] - R_soll[i]);
+          // if (v > 255)
+          //   v = 255;
+          // if (v < 90)
+          //   v = 90;
+          M[i]->setSpeed(255);
+          M[i]->run(BACKWARD);
+        }
+        else if (R[i] < R_soll[i] - toleranz)
+        {
+          // v = 3 * (R_soll[i] - R[i]);
+          // if (v > 255)
+          //   v = 255;
+          // if (v < 120)
+          //   v = 120;
+          M[i]->setSpeed(255);
+          M[i]->run(FORWARD);
+        }
+        else
+        {
+          M[i]->setSpeed(0);
+          aktiv[i] = false;
+        }
+      }
+    }
+
+    if (millis() > start_zeit + 1000)
+    {
+      M[0]->setSpeed(0);
+      M[1]->setSpeed(0);
+      M[2]->setSpeed(0);
+      return false;
+    }
+  }
+  return true;
+}
+
 
 void loop()
 {
@@ -56,61 +118,3 @@ void loop()
   Serial.println(erfolgreich);
 }
 
-boolean gehe_zu(int *R_soll)
-{
-
-  int v, R[3];
-  int toleranz = 5;
-  unsigned long start_zeit = millis();
-  boolean aktiv[3] = {true, true, true};
-
-  while ((aktiv[0] || aktiv[1] || aktiv[2]))
-  {
-
-    R[0] = analogRead(0);
-    R[1] = analogRead(1);
-    R[2] = analogRead(2);
-
-    for (byte i = 0; i <= 2; i++)
-    {
-
-      if (aktiv[i])
-      {
-        if (R[i] > R_soll[i] + toleranz)
-        {
-          v = 2 * (R[i] - R_soll[i]);
-          if (v > 255)
-            v = 255;
-          if (v < 90)
-            v = 90;
-          M[i]->setSpeed(v);
-          M[i]->run(BACKWARD);
-        }
-        else if (R[i] < R_soll[i] - toleranz)
-        {
-          v = 3 * (R_soll[i] - R[i]);
-          if (v > 255)
-            v = 255;
-          if (v < 120)
-            v = 120;
-          M[i]->setSpeed(v);
-          M[i]->run(FORWARD);
-        }
-        else
-        {
-          M[i]->setSpeed(0);
-          aktiv[i] = false;
-        }
-      }
-    }
-
-    if (millis() > start_zeit + 1000)
-    {
-      M[0]->setSpeed(0);
-      M[1]->setSpeed(0);
-      M[2]->setSpeed(0);
-      return false;
-    }
-  }
-  return true;
-}
