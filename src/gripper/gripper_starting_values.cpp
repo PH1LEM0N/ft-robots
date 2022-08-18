@@ -17,14 +17,6 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println("hello");
-  // bool avail = Serial.available();
-  // Serial.print("avail: ");
-  // Serial.println(avail);
-  // Serial.print("1 == avail: ");
-  // Serial.println(1 == avail);
-  // Serial.println("------");
-  // //Serial.println("hello");
 
   if (Serial.available() > 0) {
     int v = Serial.parseInt();
