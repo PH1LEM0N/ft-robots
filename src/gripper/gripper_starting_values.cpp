@@ -7,13 +7,13 @@
 // #include <Adafruit_MotorShield.h>
 
 // Adafruit_MotorShield MotorShield = Adafruit_MotorShield();
-// Adafruit_DCMotor *M = MotorShield.getMotor(3);
+// Adafruit_DCMotor *M = MotorShield.getMotor(2);
 
 // void setup() {
 //   Serial.begin(115200);
 //   MotorShield.begin();
+//   Serial.println("Enter speed (0 - 255):");
 //   M->setSpeed(255);
-//   Serial.flush();
 // }
 
 // void loop() {
